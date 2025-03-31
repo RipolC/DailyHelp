@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Schedule</string>
+    <string name="select_date">Select a date</string>
+    <string name="add_event">Add event</string>
+    <string name="save_event">Save event</string>
+    <string name="cancel">Cancel</string>
+    <string name="no_events">No events on this date</string>
+    <string name="change_language">Change language</string>
+    <string name="select_time">Select a time</string>
+    <string name="no_time_selected">No time selected</string>
+    <string name="delete_event">Delete Event</string>
+    <string name="confirm_delete">Are you sure about deleting this event?</string>
+    <string name="deleted_event">Event deleted</string>
+    <string name="Saved_event">Event saved</string>
+
+</resources>
+
+

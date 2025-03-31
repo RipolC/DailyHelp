@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Agenda</string>
+    <string name="select_date">Selecciona una fecha</string>
+    <string name="add_event">Añadir evento</string>
+    <string name="save_event">Guardar evento</string>
+    <string name="cancel">Cancelar</string>
+    <string name="no_events">No hay eventos en esta fecha</string>
+    <string name="change_language">Cambiar idioma</string>
+    <string name="select_time">Selecciona una hora</string>
+    <string name="no_time_selected">No se ha seleccionado una hora</string>
+    <string name="delete_event">Eliminar Evento</string>
+    <string name="confirm_delete">¿Seguro que quieres eliminar este evento?</string>
+    <string name="deleted_event">Evento eliminado</string>
+    <string name="Saved_event">Evento guardado</string>
+
+</resources>
+
