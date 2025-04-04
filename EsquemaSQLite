@@ -1,0 +1,36 @@
+CREATE TABLE eventos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    dateMillis LONG NOT NULL,
+    hour INTEGER NOT NULL,
+    minute INTEGER NOT NULL,
+    description TEXT NOT NULL,
+    ubicacion_id INTEGER,
+    FOREIGN KEY (ubicacion_id) REFERENCES ubicaciones(id) ON DELETE SET NULL
+);
+
+CREATE TABLE participantes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nombre TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    evento_id INTEGER NOT NULL,
+    FOREIGN KEY (evento_id) REFERENCES eventos(id) ON DELETE CASCADE
+);
+
+CREATE TABLE etiquetas (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nombre TEXT UNIQUE NOT NULL
+);
+
+CREATE TABLE evento_etiqueta (
+    evento_id INTEGER NOT NULL,
+    etiqueta_id INTEGER NOT NULL,
+    PRIMARY KEY (evento_id, etiqueta_id),
+    FOREIGN KEY (evento_id) REFERENCES eventos(id) ON DELETE CASCADE,
+    FOREIGN KEY (etiqueta_id) REFERENCES etiquetas(id) ON DELETE CASCADE
+);
+
+CREATE TABLE ubicaciones (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nombre TEXT NOT NULL,
+    direccion TEXT NOT NULL
+);
