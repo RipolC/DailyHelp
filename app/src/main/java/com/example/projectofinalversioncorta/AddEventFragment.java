@@ -15,12 +15,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 public class AddEventFragment extends Fragment {
 
-    private EditText etEventDescription;
+    private EditText etEventDescription, etUbicacion, etEtiquetas, etParticipantes;
     private Button btnPickTime, btnSaveEvent, btnCancel;
     private TextView tvSelectedTime;
     private long selectedDateMillis;
@@ -32,6 +34,10 @@ public class AddEventFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_add_event, container, false);
 
         etEventDescription = view.findViewById(R.id.etEventDescription);
+        etUbicacion = view.findViewById(R.id.etUbicacion);
+        etEtiquetas = view.findViewById(R.id.etEtiquetas);
+        etParticipantes = view.findViewById(R.id.etParticipantes);
+
         btnPickTime = view.findViewById(R.id.btnPickTime);
         btnSaveEvent = view.findViewById(R.id.btnSaveEvent);
         tvSelectedTime = view.findViewById(R.id.tvSelectedTime);
@@ -56,8 +62,12 @@ public class AddEventFragment extends Fragment {
 
         btnSaveEvent.setOnClickListener(v -> {
             String description = etEventDescription.getText().toString().trim();
-            if (description.isEmpty() || selectedHour == -1 || selectedMinute == -1) {
-                Toast.makeText(getContext(), "Debes ingresar una descripción y seleccionar la hora", Toast.LENGTH_SHORT).show();
+            String ubicacion = etUbicacion.getText().toString().trim();
+            String etiquetasStr = etEtiquetas.getText().toString().trim();
+            String participantesStr = etParticipantes.getText().toString().trim();
+
+            if (description.isEmpty() || selectedHour == -1 || selectedMinute == -1 || ubicacion.isEmpty()) {
+                Toast.makeText(getContext(), "Debes completar todos los campos", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -69,8 +79,11 @@ public class AddEventFragment extends Fragment {
             calendar.set(Calendar.MILLISECOND, 0);
             long eventDateTimeMillis = calendar.getTimeInMillis();
 
+            List<String> etiquetas = Arrays.asList(etiquetasStr.split("\\s*,\\s*"));
+            List<String> participantes = Arrays.asList(participantesStr.split("\\s*,\\s*"));
+
             EventDatabase db = new EventDatabase(getContext());
-            db.addEvent(eventDateTimeMillis, selectedHour, selectedMinute, description);
+            db.addEvent(eventDateTimeMillis, selectedHour, selectedMinute, description, ubicacion, etiquetas, participantes, getContext());
 
             Toast.makeText(getContext(), R.string.Saved_event, Toast.LENGTH_SHORT).show();
             getParentFragmentManager().popBackStack();
@@ -81,6 +94,7 @@ public class AddEventFragment extends Fragment {
         return view;
     }
 }
+
 
 
 

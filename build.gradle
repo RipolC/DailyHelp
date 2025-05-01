@@ -1,4 +1,28 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
-alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.application) apply false
 }
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            url "https://maven.pkg.github.com/AzureAD/microsoft-authentication-library-for-android"
+            credentials {
+                username = "x"  // Puedes poner cualquier texto si es público
+                password = "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"     // Un token de GitHub con permiso de lectura (ver nota abajo)
+            }
+        }
+
+        // Microsoft Surface Duo Display repo
+        maven {
+            url 'https://maven.pkg.github.com/microsoft/surface-duo-sdk'
+            credentials {
+                username = "x"
+                password = "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"
+            }
+        }
+    }
+}
+

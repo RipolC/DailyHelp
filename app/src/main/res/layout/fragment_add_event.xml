@@ -1,58 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:padding="16dp">
 
     <EditText
         android:id="@+id/etEventDescription"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="@string/select_date"
+        android:hint="Descripción del evento"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <Button
-        android:id="@+id/btnSaveEvent"
-        android:layout_width="wrap_content"
+    <EditText
+        android:id="@+id/etUbicacion"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/save_event"
+        android:hint="Ubicación"
         app:layout_constraintTop_toBottomOf="@id/etEventDescription"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp" />
 
-    <Button
-        android:id="@+id/btnCancel"
-        android:layout_width="wrap_content"
+    <EditText
+        android:id="@+id/etEtiquetas"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/cancel"
-        app:layout_constraintTop_toBottomOf="@id/btnSaveEvent"
+        android:hint="Etiquetas (separadas por comas)"
+        app:layout_constraintTop_toBottomOf="@id/etUbicacion"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp" />
+
+    <EditText
+        android:id="@+id/etParticipantes"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Participantes (separados por comas)"
+        app:layout_constraintTop_toBottomOf="@id/etEtiquetas"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp" />
 
     <Button
         android:id="@+id/btnPickTime"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="160dp"
+        android:text="Seleccionar hora"
         android:padding="8dp"
-        android:text="@string/select_time"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintTop_toBottomOf="@id/etParticipantes"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/etEventDescription" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
 
     <TextView
         android:id="@+id/tvSelectedTime"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/no_time_selected"
+        android:layout_marginTop="8dp"
+        android:padding="8dp"
+        android:text="Hora no seleccionada"
         android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@id/btnPickTime"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnPickTime" />
+
+    <Button
+        android:id="@+id/btnSaveEvent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Guardar evento"
+        app:layout_constraintTop_toBottomOf="@id/tvSelectedTime"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:padding="8dp"/>
+        android:layout_marginTop="16dp" />
 
+    <Button
+        android:id="@+id/btnCancel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Cancelar"
+        app:layout_constraintTop_toBottomOf="@id/btnSaveEvent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+

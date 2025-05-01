@@ -12,6 +12,7 @@
     <string name="confirm_delete">¿Seguro que quieres eliminar este evento?</string>
     <string name="deleted_event">Evento eliminado</string>
     <string name="Saved_event">Evento guardado</string>
+    <!-- TODO: Remove or change this placeholder text -->
 
 </resources>
 

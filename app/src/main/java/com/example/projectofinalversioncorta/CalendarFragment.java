@@ -43,7 +43,6 @@ public class CalendarFragment extends Fragment {
 
         calendarView = view.findViewById(R.id.calendarView);
         btnAddEvent = view.findViewById(R.id.btnAddEvent);
-        btnDeleteEvent = view.findViewById(R.id.btnDeleteEvent);
         lvEventList = view.findViewById(R.id.lvEventList);
 
         db = new EventDatabase(getContext());
@@ -72,14 +71,20 @@ public class CalendarFragment extends Fragment {
             btnDeleteEvent.setVisibility(View.VISIBLE);
         });
 
-        btnDeleteEvent.setOnClickListener(v -> {
-            if (selectedEvent != null) {
-                db.deleteEvent(selectedEvent.getId());
-                loadEvents();
-                btnDeleteEvent.setVisibility(View.GONE);
-                Toast.makeText(getContext(), R.string.deleted_event, Toast.LENGTH_SHORT).show();
-            }
+        lvEventList.setOnItemClickListener((parent, view1, position, id) -> {
+            selectedEvent = events.get(position);
+
+            // Abrir EventDetailFragment pasando el ID del evento
+            EventDetailFragment detailFragment = EventDetailFragment.newInstance(selectedEvent.getId());
+
+            getParentFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, detailFragment)
+                    .addToBackStack(null)
+                    .commit();
         });
+
+
 
         return view;
     }
@@ -93,6 +98,9 @@ public class CalendarFragment extends Fragment {
         adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, eventDescriptions);
         lvEventList.setAdapter(adapter);
     }
+
+
+
 }
 
 
