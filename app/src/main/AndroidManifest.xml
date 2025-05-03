@@ -41,7 +41,8 @@
                     tools:ignore="AppLinkUrlError" />
             </intent-filter>
         </activity>
-        <receiver android:name=".EventReminderReceiver" android:exported="true"/>
+        <receiver android:name=".EventReminderReceiver" android:exported="true"
+            android:permission="TODO" android:enabled="true"/>
 
     </application>
 
