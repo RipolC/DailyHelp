@@ -1,34 +1,34 @@
 package com.example.projectofinalversioncorta;
 
-import static androidx.test.InstrumentationRegistry.getContext;
-
+import static androidx.constraintlayout.motion.widget.Debug.getLocation;
 import android.Manifest;
-import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.util.Log;
-import android.widget.Button;
 
-
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import android.view.View;
 import android.widget.TextView;
-
-
+import android.widget.Toast;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -37,17 +37,17 @@ import com.microsoft.identity.client.AuthenticationCallback;
 import com.microsoft.identity.client.IAccount;
 import com.microsoft.identity.client.IAuthenticationResult;
 import com.microsoft.identity.client.exception.MsalException;
-
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
-
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -55,20 +55,22 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
-    private Button btnChangeLanguage;
-    private Button btnSignInOutlook;
     private static final String PREFS_NAME = "AppSettings";
     private static final String KEY_LANGUAGE = "App_Lang";
-
+    private boolean permisos = false;
     private TextView consejoTextView;
+    // Declarar los lanzadores arriba en tu actividad
+    private ActivityResultLauncher<String> requestNotificationPermissionLauncher;
+    private ActivityResultLauncher<String> requestLocationPermissionLauncher;
 
 
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
+
+        ThemeHelper.applyTheme(this);
         super.onCreate(savedInstanceState);
 
-
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
@@ -77,40 +79,81 @@ public class MainActivity extends AppCompatActivity {
                     NotificationManager.IMPORTANCE_HIGH
             );
             channel.setDescription("Canal para notificaciones de eventos");
-
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(channel);
         }
 
-        AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if (alarmManager != null && !alarmManager.canScheduleExactAlarms()) {
-                Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
-                intent.setData(Uri.parse("package:" + this.getPackageName()));
-                this.startActivity(intent);
-                return;
-            }
-        }
+        requestNotificationPermissionLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestPermission(),
+                isGranted -> {
+                    // Luego del permiso de notificaciones, pide el de ubicación
+                    requestLocationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+                }
+        );
+
+        requestLocationPermissionLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestPermission(),
+                isGranted -> {
+                    if (isGranted) {
+                        generarConsejoClimatico();
+                    } else {
+                        Toast.makeText(this, "@string/location_request", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+
+// Inicia el flujo de permisos
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 1001);
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+            } else {
+                // Si ya tiene el permiso, pedimos ubicación directamente
+                requestLocationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
             }
+        } else {
+            requestLocationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
         }
-
-
 
 
 
         applySavedLanguage();
         setContentView(R.layout.activity_main);
 
-        btnChangeLanguage = findViewById(R.id.btnChangeLanguage);
-        btnSignInOutlook = findViewById(R.id.btnSignInOutlook);
-        btnSignInOutlook.setVisibility(View.GONE); // Ocultar por defecto
-        consejoTextView = findViewById(R.id.consejoTextView);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.navigation_view);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
 
 
-        btnChangeLanguage.setOnClickListener(v -> changeLanguage());
+        FloatingActionButton fab = findViewById(R.id.fabConsejoClima);
+        CardView cardConsejo = findViewById(R.id.card_consejo);
+        TextView consejoTextView = findViewById(R.id.consejoTextView);
+        SharedPreferences prefs = getSharedPreferences("clima_prefs", MODE_PRIVATE);
+
+// Generar consejo al iniciar la app
+        generarConsejoClimatico();
+
+// FAB muestra u oculta el consejo guardado
+        fab.setOnClickListener(view -> {
+            if (cardConsejo.getVisibility() == View.VISIBLE) {
+                cardConsejo.animate().alpha(0f).translationY(100).setDuration(300).withEndAction(() -> {
+                    cardConsejo.setVisibility(View.GONE);
+                });
+            } else {
+                String consejoActualizado = prefs.getString("consejo_texto", "@string/no_advice");
+                consejoTextView.setText(consejoActualizado);
+                mostrarCardConAnimacion(cardConsejo);
+            }
+        });
+
+
+
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -122,11 +165,12 @@ public class MainActivity extends AppCompatActivity {
 
         MsalManager msalManager = MsalManager.getInstance(this);
 
+        // Cargar cuenta al iniciar la app
         msalManager.whenReady(() -> {
             msalManager.loadAccount(new MsalManager.AccountCallback() {
                 @Override
                 public void onAccountAvailable(IAccount account) {
-                    btnSignInOutlook.setVisibility(View.GONE);
+                    // Ya hay sesión iniciada, sincronizamos automáticamente
                     msalManager.acquireTokenSilent(new MsalManager.TokenCallback() {
                         @Override
                         public void onTokenReceived(String token) {
@@ -142,44 +186,62 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onAccountUnavailable() {
-                    btnSignInOutlook.setVisibility(View.VISIBLE);
-                    btnSignInOutlook.setOnClickListener(v -> {
-                        msalManager.signIn(MainActivity.this, new AuthenticationCallback() {
-                            @Override
-                            public void onSuccess(IAuthenticationResult authenticationResult) {
-                                btnSignInOutlook.setVisibility(View.GONE);
-                                sincronizarEventos(authenticationResult.getAccessToken());
-                            }
-
-                            @Override
-                            public void onError(MsalException e) {
-                                Log.e("MSAL", "Error durante el login", e);
-                            }
-
-                            @Override
-                            public void onCancel() {
-                                Log.d("MSAL", "Login cancelado.");
-                            }
-                        });
-                    });
+                    Log.d("MSAL", "No hay cuenta MSAL cargada al iniciar.");
                 }
-
             });
         });
 
-        // Obtener la ciudad por ubicación y consultar el clima
-        LocationHelper locationHelper = new LocationHelper(this, city -> {
-            if (city != null) {
-                WeatherManager.getWeatherForecast(this, city, consejoTextView);
+        // Acción del menú lateral
+        navigationView.setNavigationItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.nav_outlook) {
+                IAccount cuenta = msalManager.getCurrentAccount();
+                if (cuenta != null) {
+                    Toast.makeText(this, "@string/current_account", Toast.LENGTH_SHORT).show();
+                } else {
+                    msalManager.signIn(this, new AuthenticationCallback() {
+                        @Override
+                        public void onSuccess(IAuthenticationResult authenticationResult) {
+                            String token = authenticationResult.getAccessToken();
+                            sincronizarEventos(token);
+                        }
 
-            } else {
-                Log.e("CLIMA", "No se pudo obtener la ciudad.");
+                        @Override
+                        public void onError(MsalException e) {
+                            Log.e("MSAL", "Error durante el login", e);
+                        }
+
+                        @Override
+                        public void onCancel() {
+                            Log.d("MSAL", "Login cancelado.");
+                        }
+                    });
+                }
+            } else if (id == R.id.nav_change_language) {
+                changeLanguage();
             }
+            else if (id == R.id.nav_change_theme) {
+                ThemeHelper.toggleTheme(this);
+                recreate();
+            }
+            drawerLayout.closeDrawer(GravityCompat.START);
+            return true;
         });
-        locationHelper.requestCity();
+
+
 
 
     }
+
+    private void pedirPermisoUbicacion() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    1002);
+        }
+    }
+
 
 
     private void sincronizarEventos(String accessToken) {
@@ -213,9 +275,14 @@ public class MainActivity extends AppCompatActivity {
                             String subject = event.get("subject").getAsString();
                             String startDateTime = event.getAsJsonObject("start").get("dateTime").getAsString();
 
-                            long millis = parseDateTimeToMillis(startDateTime);
-                            int hour = extractHour(startDateTime);
-                            int minute = extractMinute(startDateTime);
+                            // Convertir la hora de inicio de UTC a local
+                            ZonedDateTime startLocal = ZonedDateTime
+                                    .parse(startDateTime + "Z")
+                                    .withZoneSameInstant(ZoneId.systemDefault());
+
+                            long millis = startLocal.toInstant().toEpochMilli();
+                            int hour = startLocal.getHour();
+                            int minute = startLocal.getMinute();
 
                             // Verificación para evitar duplicados
                             if (db.eventoYaExiste(millis, hour, minute, subject)) {
@@ -224,7 +291,7 @@ public class MainActivity extends AppCompatActivity {
                             }
 
                             // Ubicación
-                            String ubicacion = "Sin ubicación especificada";
+                            String ubicacion = "@string/without_location";
                             if (event.has("location") && event.getAsJsonObject("location").has("displayName")) {
                                 ubicacion = event.getAsJsonObject("location").get("displayName").getAsString();
                             }
@@ -255,7 +322,7 @@ public class MainActivity extends AppCompatActivity {
                             }
 
                             // Insertar en SQLite
-                            db.addEvent(millis, hour, minute, subject, ubicacion, etiquetas, participantes, getContext());
+                            db.addEvent(millis, hour, minute, subject, ubicacion, etiquetas, participantes, getApplicationContext());
                         }
 
                         Log.d("SYNC", "Eventos sincronizados correctamente.");
@@ -339,7 +406,39 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void mostrarCardConAnimacion(CardView card) {
+        card.setAlpha(0f);
+        card.setTranslationY(100);
+        card.setVisibility(View.VISIBLE);
+        card.animate().alpha(1f).translationY(0).setDuration(300).start();
+    }
 
+    private void generarConsejoClimatico() {
+        SharedPreferences prefs = getSharedPreferences("clima_prefs", MODE_PRIVATE);
+        String fechaActual = new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date());
+        String ultimaFecha = prefs.getString("fecha_consejo", "");
+        String consejoGuardado = prefs.getString("consejo_texto", "");
+
+        if (!fechaActual.equals(ultimaFecha) || consejoGuardado.isEmpty()) {
+            LocationHelper locationHelper = new LocationHelper(this, city -> {
+                if (city != null) {
+                    WeatherManager.getWeatherForecast(this, city, textoConsejo -> {
+                        prefs.edit()
+                                .putString("fecha_consejo", fechaActual)
+                                .putString("consejo_texto", textoConsejo)
+                                .apply();
+
+                        Log.d("CLIMA", "Consejo generado y guardado: " + textoConsejo);
+                    });
+                } else {
+                    Log.e("CLIMA", "No se pudo obtener la ciudad.");
+                }
+            });
+            locationHelper.requestCity();
+        } else {
+            Log.d("CLIMA", "Consejo ya generado para hoy. Se usará el guardado.");
+        }
+    }
 
 
 }

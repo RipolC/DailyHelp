@@ -67,7 +67,7 @@ public class AddEventFragment extends Fragment {
             String participantesStr = etParticipantes.getText().toString().trim();
 
             if (description.isEmpty() || selectedHour == -1 || selectedMinute == -1 || ubicacion.isEmpty()) {
-                Toast.makeText(getContext(), "Debes completar todos los campos", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.all_fields_required), Toast.LENGTH_SHORT).show();
                 return;
             }
 

@@ -1,7 +1,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+    <!-- Base application theme -->
     <style name="Base.Theme.ProjectoFinalVersionCorta" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <!-- Personaliza tu tema oscuro aquí -->
+        <item name="cardTextColor">#FFFFFF</item> <!-- Texto blanco -->
+        <item name="fabIconTint">#000000</item> <!-- Ícono del FAB en blanco -->
     </style>
+
+    <style name="Theme.ProjectoFinalVersionCorta" parent="Base.Theme.ProjectoFinalVersionCorta" />
 </resources>

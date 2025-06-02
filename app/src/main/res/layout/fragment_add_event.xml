@@ -10,51 +10,57 @@
         android:id="@+id/etEventDescription"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Descripción del evento"
+        android:hint="@string/description_event"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:inputType="textCapSentences"
+        />
 
     <EditText
         android:id="@+id/etUbicacion"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Ubicación"
+        android:hint="@string/location_event"
         app:layout_constraintTop_toBottomOf="@id/etEventDescription"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:inputType="textCapSentences"
         android:layout_marginTop="8dp" />
 
     <EditText
         android:id="@+id/etEtiquetas"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Etiquetas (separadas por comas)"
+        android:hint="@string/tag_event"
         app:layout_constraintTop_toBottomOf="@id/etUbicacion"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:inputType="textCapSentences"
         android:layout_marginTop="8dp" />
 
     <EditText
         android:id="@+id/etParticipantes"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Participantes (separados por comas)"
+        android:hint="@string/participants_event"
         app:layout_constraintTop_toBottomOf="@id/etEtiquetas"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:inputType="textCapSentences"
         android:layout_marginTop="8dp" />
 
     <Button
         android:id="@+id/btnPickTime"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Seleccionar hora"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="#495EF2"
         android:padding="8dp"
-        app:layout_constraintTop_toBottomOf="@id/etParticipantes"
-        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/select_hour"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/etParticipantes" />
 
     <TextView
         android:id="@+id/tvSelectedTime"
@@ -62,7 +68,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:padding="8dp"
-        android:text="Hora no seleccionada"
+        android:text="@string/not_selected_hour"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -73,7 +79,8 @@
         android:id="@+id/btnSaveEvent"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Guardar evento"
+        android:backgroundTint="#495EF2"
+        android:text="@string/save_event"
         app:layout_constraintTop_toBottomOf="@id/tvSelectedTime"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -83,7 +90,8 @@
         android:id="@+id/btnCancel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Cancelar"
+        android:backgroundTint="#495EF2"
+        android:text="@string/cancel"
         app:layout_constraintTop_toBottomOf="@id/btnSaveEvent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

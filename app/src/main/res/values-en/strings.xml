@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Schedule</string>
+    <string name="app_name">DailyHelp</string>
     <string name="select_date">Select a date</string>
     <string name="add_event">Add event</string>
     <string name="save_event">Save event</string>
@@ -12,6 +12,30 @@
     <string name="confirm_delete">Are you sure about deleting this event?</string>
     <string name="deleted_event">Event deleted</string>
     <string name="Saved_event">Event saved</string>
+    <string name="navigation_drawer_open">Open</string>
+    <string name="navigation_drawer_close">Closed</string>
+    <string name="return_menu">Return</string>
+    <string name="description_event">Event description</string>
+    <string name="location_event">Event location</string>
+    <string name="tag_event">Event tags (separated by commas)</string>
+    <string name="participants_event">Event participants (separated by commas)</string>
+    <string name="select_hour">Select hour</string>
+    <string name="not_selected_hour">Hour not selected</string>
+    <string name="location_request">Location is needed to get the weather.</string>
+    <string name="no_advice">No advice available.</string>
+    <string name="current_account">There is already an active session.</string>
+    <string name="without_location">Without location specified</string>
+    <string name="all_fields_required">You must complete all fields</string>
+    <string name="sign_in_outlook">Sign in with Outlook</string>
+    <string name="theme_dark_light">Change theme dark/light</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="description">Description: </string>
+    <string name="location">Location: </string>
+    <string name="participants">Participants: </string>
+    <string name="tags">Tags: </string>
+    <string name="hour">Hour: </string>
+    <!-- TODO: Remove or change this placeholder text -->
 
 </resources>
 

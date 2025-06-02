@@ -22,7 +22,10 @@ allprojects {
                 username = "x"
                 password = "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"
             }
+
         }
+
+
     }
 }
 

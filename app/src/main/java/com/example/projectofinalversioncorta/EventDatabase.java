@@ -1,8 +1,5 @@
 package com.example.projectofinalversioncorta;
 
-import static androidx.core.content.ContentProviderCompat.requireContext;
-import static androidx.core.content.ContextCompat.getSystemService;
-
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.ContentValues;
@@ -11,12 +8,16 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Build;
 import android.util.Log;
+
+import androidx.work.Data;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class EventDatabase extends SQLiteOpenHelper {
 
@@ -156,7 +157,7 @@ public class EventDatabase extends SQLiteOpenHelper {
                 epValues.put("participante_id", participanteId);
                 db.insert(TABLE_EVENT_PARTICIPANT, null, epValues);
             }
-            programarAlarma(context, dateMillis, hour, minute, description);
+            programarNotificacionConWorkManager(context, dateMillis, hour, minute, description);
 
 
 
@@ -340,19 +341,8 @@ public class EventDatabase extends SQLiteOpenHelper {
         return exists;
     }
 
-    public void programarAlarma(Context context, long dateMillis, int hour, int minute, String description) {
-        // Intent que será recibido por EventReminderReceiver
-        Intent intent = new Intent(context, EventReminderReceiver.class);
-        intent.putExtra("description", description);
-
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                context,
-                (int) dateMillis, // ID único
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-        );
-
-        // Fecha y hora del evento
+    public void programarNotificacionConWorkManager(Context context, long dateMillis, int hour, int minute, String description) {
+        // Configurar la fecha y hora del evento
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(dateMillis);
         calendar.set(Calendar.HOUR_OF_DAY, hour);
@@ -360,31 +350,30 @@ public class EventDatabase extends SQLiteOpenHelper {
         calendar.set(Calendar.SECOND, 0);
 
         long triggerAt = calendar.getTimeInMillis();
-        Log.d("ALARMA", "Programando alarma para: " + triggerAt);
+        long delay = triggerAt - System.currentTimeMillis();
 
-        if (triggerAt > System.currentTimeMillis()) {
-            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            if (alarmManager != null) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    alarmManager.setExactAndAllowWhileIdle(
-                            AlarmManager.RTC_WAKEUP,
-                            calendar.getTimeInMillis(),
-                            pendingIntent
-                    );
-                } else {
-                    // Para versiones anteriores a Marshmallow
-                    alarmManager.setExact(
-                            AlarmManager.RTC_WAKEUP,
-                            calendar.getTimeInMillis(),
-                            pendingIntent
-                    );
-                }
-
-            }
-        } else {
-            Log.w("ALARMA", "No se programó la alarma porque la fecha/hora ya pasó.");
+        if (delay <= 0) {
+            Log.w("WORKMANAGER", "No se programó la notificación porque la fecha/hora ya pasó.");
+            return;
         }
+
+        // Datos para enviar al Worker
+        Data inputData = new Data.Builder()
+                .putString("description", description)
+                .build();
+
+        // Crear WorkRequest
+        OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(EventNotificationWorker.class)
+                .setInitialDelay(delay, TimeUnit.MILLISECONDS)
+                .setInputData(inputData)
+                .build();
+
+        // Encolar el trabajo
+        WorkManager.getInstance(context).enqueue(workRequest);
+
+        Log.d("WORKMANAGER", "Notificación programada para: " + triggerAt);
     }
+
 
 
 
