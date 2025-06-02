@@ -18,17 +18,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class CalendarFragment extends Fragment {
 
     private CalendarView calendarView;
-    private Button btnAddEvent, btnDeleteEvent;
+    private Button btnDeleteEvent;
     private ListView lvEventList;
     private EventDatabase db;
     private long selectedDateMillis;
@@ -42,7 +41,7 @@ public class CalendarFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_calendar, container, false);
 
         calendarView = view.findViewById(R.id.calendarView);
-        btnAddEvent = view.findViewById(R.id.btnAddEvent);
+        FloatingActionButton btnAddEvent = view.findViewById(R.id.btnAddEvent);
         lvEventList = view.findViewById(R.id.lvEventList);
 
         db = new EventDatabase(getContext());

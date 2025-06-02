@@ -10,7 +10,6 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-
         maven {
             url "https://maven.pkg.github.com/AzureAD/microsoft-authentication-library-for-android"
             credentials {

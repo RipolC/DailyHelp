@@ -57,14 +57,14 @@ public class EventDetailFragment extends Fragment {
 
         btnDeleteEvent.setOnClickListener(v -> {
             new AlertDialog.Builder(getContext())
-                    .setTitle("Eliminar evento")
-                    .setMessage("¿Estás seguro de que quieres eliminar este evento?")
-                    .setPositiveButton("Sí", (dialog, which) -> {
+                    .setTitle(R.string.delete_event)
+                    .setMessage(R.string.confirm_delete)
+                    .setPositiveButton(R.string.yes, (dialog, which) -> {
                         db.deleteEvent(eventId);
-                        Toast.makeText(getContext(), "Evento eliminado", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), R.string.deleted_event, Toast.LENGTH_SHORT).show();
                         getParentFragmentManager().popBackStack();
                     })
-                    .setNegativeButton("No", null)
+                    .setNegativeButton(R.string.no, null)
                     .show();
         });
 
@@ -80,20 +80,20 @@ public class EventDetailFragment extends Fragment {
     private void loadEventDetails(int eventId) {
         Event event = db.getEventById(eventId);
         if (event != null) {
-            tvDescription.setText("Descripción: " + event.getDescription());
-            tvTime.setText("Hora: " + event.getTime());
+            tvDescription.setText(getString(R.string.description) + event.getDescription());
+            tvTime.setText(getString(R.string.hour) + event.getTime());
 
             if (event.getUbicacion() != null) {
-                tvUbicacion.setText("Ubicación: " + event.getUbicacion().getNombre());
+                tvUbicacion.setText(getString(R.string.location) + event.getUbicacion().getNombre());
             }
 
             String etiquetas = TextUtils.join(", ", event.getEtiquetas()
                     .stream().map(Tag::getNombre).collect(Collectors.toList()));
-            tvEtiquetas.setText("Etiquetas: " + etiquetas);
+            tvEtiquetas.setText(getString(R.string.tags) + etiquetas);
 
             String participantes = TextUtils.join(", ", event.getParticipantes()
                     .stream().map(Participant::getNombre).collect(Collectors.toList()));
-            tvParticipantes.setText("Participantes: " + participantes);
+            tvParticipantes.setText(getString(R.string.participants) + participantes);
         }
     }
 }

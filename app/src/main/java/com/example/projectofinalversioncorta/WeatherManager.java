@@ -4,14 +4,13 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.function.Consumer;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -20,10 +19,10 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class WeatherManager {
-    private static final String API_KEY = "e9db4bda05414e8cad9105648252204";
+    private static final String API_KEY = "";
     private static final String BASE_URL = "https://api.weatherapi.com/v1/forecast.json?days=1&q=";
 
-    public static void getWeatherForecast(Context context, String city, TextView consejoTextView) {
+    public static void getWeatherForecast(Context context, String city, Consumer<String> onConsejoRecibido) {
         String url = BASE_URL + city + "&key=" + API_KEY;
 
         OkHttpClient client = new OkHttpClient();
@@ -48,10 +47,24 @@ public class WeatherManager {
                 String body = response.body().string();
                 try {
                     JSONObject json = new JSONObject(body);
-                    String condition = json.getJSONObject("current").getJSONObject("condition").getString("text");
-                    double tempC = json.getJSONObject("current").getDouble("temp_c");
+                    // Obtener la condición actual
+                    String condition = json.getJSONObject("current")
+                            .getJSONObject("condition")
+                            .getString("text");
 
-                    String forecast = "Clima: " + condition + ", Temperatura: " + tempC + "°C";
+// Obtener forecast para el primer día (hoy)
+                    JSONObject day = json.getJSONObject("forecast")
+                            .getJSONArray("forecastday")
+                            .getJSONObject(0)
+                            .getJSONObject("day");
+
+                    double maxTemp = day.getDouble("maxtemp_c");
+                    double minTemp = day.getDouble("mintemp_c");
+                    double porcLluvia = day.getDouble("daily_chance_of_rain");
+
+
+                    String forecast = "Clima: " + condition + ", Temperatura máxima: " + maxTemp + "°C" + ", Temperatura minima: " + minTemp + "°C"
+                            + ", Porcentaje probabilidad de lluvia: " + porcLluvia;
 
                     Log.d("CLIMA", forecast);
 
@@ -74,9 +87,9 @@ public class WeatherManager {
 
                                     Log.d("CONSEJO", consejo);
 
-                                    // Mostrar en TextView desde hilo principal
-                                    new android.os.Handler(Looper.getMainLooper()).post(() -> {
-                                        consejoTextView.setText(consejo);
+                                    new Handler(Looper.getMainLooper()).post(() -> {
+                                        // Llama al callback con el texto del consejo
+                                        onConsejoRecibido.accept(consejo);
                                     });
 
                                 } catch (Exception e) {
@@ -94,6 +107,7 @@ public class WeatherManager {
             }
         });
     }
+
 
 }
 

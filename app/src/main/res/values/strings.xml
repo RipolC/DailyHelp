@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Agenda</string>
+    <string name="app_name">DailyHelp</string>
     <string name="select_date">Selecciona una fecha</string>
     <string name="add_event">Añadir evento</string>
     <string name="save_event">Guardar evento</string>
@@ -12,6 +12,29 @@
     <string name="confirm_delete">¿Seguro que quieres eliminar este evento?</string>
     <string name="deleted_event">Evento eliminado</string>
     <string name="Saved_event">Evento guardado</string>
+    <string name="navigation_drawer_open">Abierto</string>
+    <string name="navigation_drawer_close">Cerrado</string>
+    <string name="return_menu">Volver</string>
+    <string name="description_event">Descripcion del evento</string>
+    <string name="location_event">Ubicación del evento</string>
+    <string name="tag_event">Etiquetas del evento (separar por comas)</string>
+    <string name="participants_event">Participantes del evento (separar por comas)</string>
+    <string name="select_hour">Seleccionar hora</string>
+    <string name="not_selected_hour">Hora no seleccionada</string>
+    <string name="location_request">Se necesita ubicación para obtener el clima.</string>
+    <string name="no_advice">No hay consejo disponible.</string>
+    <string name="current_account">Ya hay una sesión iniciada.</string>
+    <string name="without_location">Sin ubicación especificada</string>
+    <string name="all_fields_required">Debes completar todos los campos</string>
+    <string name="sign_in_outlook">Iniciar sesión con Outlook</string>
+    <string name="theme_dark_light">Cambiar tema oscuro/claro</string>
+    <string name="yes">Sí</string>
+    <string name="no">No</string>
+    <string name="description">Descripción: </string>
+    <string name="location">Ubicación: </string>
+    <string name="participants">Participantes: </string>
+    <string name="tags">Etiquetas: </string>
+    <string name="hour">Hora: </string>
     <!-- TODO: Remove or change this placeholder text -->
 
 </resources>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Declarar atributos personalizados para tema -->
+    <attr name="cardTextColor" format="color" />
+    <attr name="fabIconTint" format="color" />
+</resources>
